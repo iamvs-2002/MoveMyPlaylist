@@ -1,6 +1,6 @@
 # MoveMyPlaylist
 
-MoveMyPlaylist is a free, open-source tool for transferring music playlists between Spotify and YouTube Music. It uses a \Bring Your Own Key\ (BYOK) model for privacy and to bypass global API rate limits.
+MoveMyPlaylist is a free, open-source tool for transferring music playlists between Spotify and YouTube Music. It uses a "Bring Your Own Key" (BYOK) model for privacy and to bypass global API rate limits.
 
 ## Key URLs
 - Home: https://movemyplaylist.online
