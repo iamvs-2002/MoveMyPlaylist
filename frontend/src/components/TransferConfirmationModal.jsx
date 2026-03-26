@@ -103,26 +103,26 @@ const TransferConfirmationModal = ({
           {/* Scrollable Body */}
           <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
             {/* Visual Transfer Overview */}
-            <div className="relative rounded-2xl p-6 bg-gradient-to-r from-white/5 to-white/5 border border-white/10 overflow-hidden">
+            <div className="relative rounded-2xl p-4 sm:p-6 bg-gradient-to-r from-white/5 to-white/5 border border-white/10 overflow-hidden">
               <div className="absolute inset-0 bg-mesh-dark opacity-30 mix-blend-screen pointer-events-none"></div>
               <div className="relative z-10 flex flex-col items-center">
-                <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50 mb-6">
+                <h3 className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-white/50 mb-4 sm:mb-6">
                   Transfer Path
                 </h3>
-                <div className="flex items-center justify-center space-x-6 md:space-x-12 w-full">
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-6 sm:space-y-0 sm:space-x-12 w-full">
                   {/* Source */}
                   <div className="flex flex-col items-center">
                     {getPlatformIcon(selectedPlatforms.source)}
-                    <p className="font-display font-bold text-white">
+                    <p className="font-display font-bold text-white text-sm sm:text-base">
                       {getPlatformName(selectedPlatforms.source)}
                     </p>
-                    <p className="text-xs text-white/50">Source</p>
+                    <p className="text-[10px] sm:text-xs text-white/50 uppercase tracking-tighter">Source</p>
                   </div>
 
                   {/* Animated Arrow */}
-                  <div className="flex flex-col items-center justify-center">
+                  <div className="flex flex-col items-center justify-center rotate-90 sm:rotate-0">
                     <div className="relative">
-                      <ArrowRight className="w-10 h-10 text-primary animate-pulse" />
+                      <ArrowRight className="w-8 h-8 sm:w-10 sm:h-10 text-primary animate-pulse" />
                       <div className="absolute inset-0 bg-primary/20 blur-md rounded-full"></div>
                     </div>
                   </div>
@@ -130,10 +130,10 @@ const TransferConfirmationModal = ({
                   {/* Destination */}
                   <div className="flex flex-col items-center">
                     {getPlatformIcon(selectedPlatforms.destination)}
-                    <p className="font-display font-bold text-white">
+                    <p className="font-display font-bold text-white text-sm sm:text-base">
                       {getPlatformName(selectedPlatforms.destination)}
                     </p>
-                    <p className="text-xs text-white/50">Destination</p>
+                    <p className="text-[10px] sm:text-xs text-white/50 uppercase tracking-tighter">Destination</p>
                   </div>
                 </div>
               </div>
@@ -298,11 +298,11 @@ const TransferConfirmationModal = ({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end space-x-4 p-6 border-t border-white/10 bg-white/[0.02]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end space-y-3 sm:space-y-0 sm:space-x-4 p-6 border-t border-white/10 bg-white/[0.02]">
             <button
               onClick={onClose}
               disabled={isTransferring}
-              className="px-6 py-2.5 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors disabled:opacity-50 text-sm font-medium outline-none"
+              className="px-6 py-3 text-white/70 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors disabled:opacity-50 text-sm font-medium outline-none"
             >
               Cancel
             </button>
@@ -310,7 +310,7 @@ const TransferConfirmationModal = ({
             <button
               onClick={handleConfirm}
               disabled={isTransferring || !playlistName.trim()}
-              className="btn-primary py-2.5 px-8 flex items-center gap-2"
+              className="btn-primary py-3 px-8 flex items-center justify-center gap-2"
             >
               {isTransferring ? (
                 <>

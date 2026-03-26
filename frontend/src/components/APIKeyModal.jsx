@@ -85,7 +85,7 @@ const APIKeyModal = ({ isOpen, platform, onClose, onSubmit }) => {
                     </a>
                     , create an app, and copy the Client ID and Client Secret.
                     Ensure your Redirect URI is set to{" "}
-                    <code className="bg-black/30 px-1 py-0.5 rounded text-white/90">
+                    <code className="bg-black/30 px-1 py-0.5 rounded text-white/90 break-all whitespace-normal">
                       https://movemyplaylist.online/auth/spotify/callback
                     </code>{" "}
                     (or your domain).
@@ -104,7 +104,7 @@ const APIKeyModal = ({ isOpen, platform, onClose, onSubmit }) => {
                     , create a project, enable the YouTube Data API v3, and
                     generate an OAuth 2.0 Client ID (Web Application) and an API
                     Key. Ensure your authorized redirect URI is set to{" "}
-                    <code className="bg-black/30 px-1 py-0.5 rounded text-white/90">
+                    <code className="bg-black/30 px-1 py-0.5 rounded text-white/90 break-all whitespace-normal">
                       https://movemyplaylist.online/auth/youtube/callback
                     </code>{" "}
                     (or your domain).
