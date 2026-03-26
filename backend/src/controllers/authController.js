@@ -70,39 +70,35 @@ const initiateSpotifyAuth = async (req, res) => {
     req.session.spotifyState = state;
     req.session.spotifyCodeVerifier = codeVerifier;
 
-    // Also store in memory store for cross-domain access
-    oauthSessionStore.set(state, {
-      codeVerifier,
-      timestamp: Date.now(),
-      sessionId: req.sessionID,
-      credentials,
-    });
+    // Explicitly save session before sending auth URL to prevent race conditions
+    req.session.save((err) => {
+      if (err) console.error("Session save error in initiateSpotifyAuth:", err);
 
-    console.log("OAuth state stored in memory:", {
-      state: state,
-      storeSize: oauthSessionStore.size,
-      hasCredentials: !!credentials,
-      storedData: oauthSessionStore.get(state),
-    });
+      // Also store in memory store for cross-domain access
+      oauthSessionStore.set(state, {
+        codeVerifier,
+        timestamp: Date.now(),
+        sessionId: req.sessionID,
+        credentials,
+      });
 
-    const authUrl = spotifyService.getAuthUrl(
-      state,
-      codeChallenge,
-      credentials,
-    );
-
-    console.log("Spotify auth URL generated:", authUrl);
-
-    sendSuccess(
-      res,
-      {
-        authUrl,
+      const authUrl = spotifyService.getAuthUrl(
         state,
         codeChallenge,
-        expiresIn: 600, // 10 minutes for state expiration
-      },
-      "Redirect user to Spotify authorization URL",
-    );
+        credentials,
+      );
+
+      sendSuccess(
+        res,
+        {
+          authUrl,
+          state,
+          codeChallenge,
+          expiresIn: 600, // 10 minutes for state expiration
+        },
+        "Redirect user to Spotify authorization URL",
+      );
+    });
   } catch (error) {
     console.error("Spotify auth initiation error:", error);
     sendError(
@@ -250,15 +246,14 @@ const handleSpotifyCallback = async (req, res) => {
     });
 
     if (memoryData && memoryData.sessionId) {
-      userDataStore.set(memoryData.sessionId, userData);
-      console.log(
-        "User data stored in memory store for session:",
-        memoryData.sessionId,
-      );
-      console.log("Memory store after storing user data:", {
-        userDataStoreSize: userDataStore.size,
-        userDataStoreKeys: Array.from(userDataStore.keys()),
-      });
+      // Sync user data across original and current session IDs for robustness
+      const originalSessionId = memoryData.sessionId;
+      userDataStore.set(originalSessionId, userData);
+      
+      if (req.sessionID !== originalSessionId) {
+        userDataStore.set(req.sessionID, userData);
+        console.log(`Synced user data from original session ${originalSessionId} to current session ${req.sessionID}`);
+      }
     } else {
       console.error(
         "No memory data found for state:",
@@ -348,20 +343,25 @@ const initiateYouTubeAuth = async (req, res) => {
     // Store state in session for security
     req.session.youtubeState = state;
 
-    // Store credentials in memory store just like spotify
-    oauthSessionStore.set(state, {
-      timestamp: Date.now(),
-      sessionId: req.sessionID,
-      credentials,
+    // Explicitly save session before sending auth URL
+    req.session.save((err) => {
+      if (err) console.error("Session save error in initiateYouTubeAuth:", err);
+
+      // Store credentials in memory store just like spotify
+      oauthSessionStore.set(state, {
+        timestamp: Date.now(),
+        sessionId: req.sessionID,
+        credentials,
+      });
+
+      const authUrl = youtubeService.getAuthUrl(state, credentials);
+
+      sendSuccess(
+        res,
+        { authUrl, state },
+        "Redirect user to YouTube authorization URL",
+      );
     });
-
-    const authUrl = youtubeService.getAuthUrl(state, credentials);
-
-    sendSuccess(
-      res,
-      { authUrl, state },
-      "Redirect user to YouTube authorization URL",
-    );
   } catch (error) {
     sendError(
       res,
@@ -382,26 +382,44 @@ const handleYouTubeCallback = async (req, res) => {
 
     // Check for OAuth errors
     if (error) {
+      console.error("YouTube callback OAuth error:", error);
       return res.redirect(
         `${process.env.FRONTEND_URL}/transfer?error=login_cancelled&platform=youtube`,
       );
     }
 
-    // Verify state parameter
-    if (!state || state !== req.session.youtubeState) {
+    // Verify state parameter (handle both session and memory store fallback)
+    let sessionState = req.session.youtubeState;
+    const memoryData = state ? oauthSessionStore.get(state) : null;
+    
+    if (!sessionState && memoryData) {
+      console.log("YouTube session lost, falling back to memory store state verification");
+      sessionState = state;
+    }
+
+    if (!state || state !== sessionState) {
+      console.error("YouTube state mismatch:", { received: state, expected: sessionState });
       return res.redirect(
         `${process.env.FRONTEND_URL}/transfer?error=security_check_failed&platform=youtube`,
       );
     }
 
-    // Clear state from session
-    delete req.session.youtubeState;
+    // Check for state expiration (10 minutes)
+    if (memoryData && Date.now() - memoryData.timestamp > 600000) {
+      console.error("YouTube state expired:", state);
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/transfer?error=state_expired&platform=youtube`,
+      );
+    }
 
-    // Retrieve memory data for custom credentials
-    const memoryData = oauthSessionStore.get(state);
+    // Clear state from both session and memory store
+    delete req.session.youtubeState;
+    if (state) oauthSessionStore.delete(state);
+
     const credentials = memoryData?.credentials || null;
 
     if (!code) {
+      console.error("YouTube callback missing authorization code");
       return res.redirect(
         `${process.env.FRONTEND_URL}/transfer?error=login_incomplete&platform=youtube`,
       );
@@ -433,16 +451,14 @@ const handleYouTubeCallback = async (req, res) => {
     // Use sessionId from memory data if available
     const targetSessionId = memoryData?.sessionId || req.sessionID;
 
-    // Store in memory store using target session ID
-    if (targetSessionId) {
-      // Get existing user data or create new
-      const existingUserData = userDataStore.get(targetSessionId) || {};
-      const updatedUserData = { ...existingUserData, ...userData };
+    // Sync across session IDs
+    const existingUserData = userDataStore.get(targetSessionId) || userDataStore.get(req.sessionID) || {};
+    const updatedUserData = { ...existingUserData, ...userData };
+    
+    userDataStore.set(targetSessionId, updatedUserData);
+    if (req.sessionID !== targetSessionId) {
       userDataStore.set(req.sessionID, updatedUserData);
-      console.log(
-        "YouTube user data stored in memory store for session:",
-        req.sessionID,
-      );
+      console.log(`YouTube data synced across session IDs: ${targetSessionId} -> ${req.sessionID}`);
     }
 
     // Also try to save to current session as backup
