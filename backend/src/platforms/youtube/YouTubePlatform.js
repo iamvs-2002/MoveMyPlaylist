@@ -38,17 +38,15 @@ class YouTubePlatform extends BasePlatform {
     const requiredOAuthFields = ["clientId", "clientSecret", "redirectUri"];
     for (const field of requiredOAuthFields) {
       if (!this.config.oauth[field]) {
-        console.error(
-          `Missing required OAuth field '${field}' in YouTube config`,
+        console.warn(
+          `[BYOK] Note: Global YouTube OAuth field '${field}' is missing. Users will need to provide their own keys.`,
         );
-        return false;
       }
     }
 
     // Check API key
     if (!this.apiKey) {
-      console.error("Missing required API key in YouTube config");
-      return false;
+      console.warn("[BYOK] Note: Global YouTube API key is missing.");
     }
 
     return true;

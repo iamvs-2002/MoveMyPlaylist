@@ -11,6 +11,7 @@ import Documentation from "./pages/Documentation";
 import FAQPage from "./pages/FAQPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 // Components
 import Header from "./components/Header";
@@ -63,7 +64,7 @@ function App() {
             />
 
             {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
 

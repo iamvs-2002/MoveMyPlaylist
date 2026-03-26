@@ -110,17 +110,6 @@ const spotifyConfig = {
 
   // Get configuration for specific environment
   getConfig(environment = process.env.NODE_ENV || "development") {
-    console.log("Spotify config debug - before spread:", {
-      hasOauth: !!this.oauth,
-      hasEndpoints: !!this.endpoints,
-      hasHeaders: !!this.headers,
-      oauthKeys: this.oauth ? Object.keys(this.oauth) : "No oauth",
-      endpointKeys: this.endpoints
-        ? Object.keys(this.endpoints)
-        : "No endpoints",
-      headerKeys: this.headers ? Object.keys(this.headers) : "No headers",
-    });
-
     const baseConfig = {
       clientId: process.env.SPOTIFY_CLIENT_ID,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
@@ -130,15 +119,6 @@ const spotifyConfig = {
       ...this.endpoints,
       ...this.headers, // Include headers configuration
     };
-
-    console.log("Spotify config debug - after spread:", {
-      hasHeaders: !!baseConfig.headers,
-      headerKeys: baseConfig.headers
-        ? Object.keys(baseConfig.headers)
-        : "No headers",
-      contentType: baseConfig.contentType || "Missing",
-      userAgent: baseConfig.userAgent || "Missing",
-    });
 
     // Environment-specific overrides
     if (environment === "production") {

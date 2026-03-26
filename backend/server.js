@@ -22,6 +22,9 @@ const systemRoutes = require("./src/routes/system");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for Render/Cloud environments (fixes rate limiter issue)
+app.set("trust proxy", 1);
+
 // Initialize Firebase
 try {
   initializeFirebase();
@@ -52,17 +55,13 @@ const corsOptions = {
     if (!origin) return callback(null, true);
 
     const allowedOrigins = [
-      process.env.FRONTEND_URL || "http://localhost:3000",
+      process.env.FRONTEND_URL ?? "http://localhost:3000",
+      "https://movemyplaylist.online",
+      "https://www.movemyplaylist.online",
       "http://127.0.0.1:3000",
       "http://localhost:3001",
       "http://127.0.0.1:3001",
     ];
-
-    console.log("CORS Debug:", {
-      origin: origin,
-      allowedOrigins: allowedOrigins,
-      isAllowed: allowedOrigins.includes(origin),
-    });
 
     if (allowedOrigins.includes(origin)) {
       callback(null, true);

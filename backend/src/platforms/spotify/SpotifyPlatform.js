@@ -39,10 +39,9 @@ class SpotifyPlatform extends BasePlatform {
     const requiredOAuthFields = ["clientId", "clientSecret", "redirectUri"];
     for (const field of requiredOAuthFields) {
       if (!this.config.oauth[field]) {
-        console.error(
-          `Missing required OAuth field '${field}' in Spotify config`,
+        console.warn(
+          `[BYOK] Note: Global Spotify OAuth field '${field}' is missing. Users will need to provide their own keys in production.`,
         );
-        return false;
       }
     }
 
