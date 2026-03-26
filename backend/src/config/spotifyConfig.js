@@ -87,21 +87,22 @@ const spotifyConfig = {
     const missing = required.filter((key) => !process.env[key]);
 
     if (missing.length > 0) {
-      throw new Error(
-        `Missing required Spotify environment variables: ${missing.join(", ")}`,
+      console.warn(
+        `[BYOK MODE] Note: Global Spotify environment variables are missing (${missing.join(", ")}). Users will need to provide their own keys to connect to Spotify.`
       );
+      return true;
     }
 
     // Validate client ID format
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     if (!this.validation.clientId.pattern.test(clientId)) {
-      throw new Error("Invalid Spotify Client ID format");
+      console.warn("Invalid global Spotify Client ID format. Check your .env file.");
     }
 
     // Validate redirect URI format
     const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
     if (!this.validation.redirectUri.pattern.test(redirectUri)) {
-      throw new Error("Invalid Spotify Redirect URI format");
+      console.warn("Invalid global Spotify Redirect URI format. Check your .env file.");
     }
 
     return true;

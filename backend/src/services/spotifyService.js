@@ -12,13 +12,8 @@ const spotifyConfig = require("../config/spotifyConfig");
 
 class SpotifyService {
   constructor() {
-    // Validate environment configuration
-    try {
-      spotifyConfig.validateEnvironment();
-    } catch (error) {
-      console.error("Spotify configuration validation failed:", error.message);
-      throw error;
-    }
+    // Validate environment configuration (non-fatal in BYOK mode)
+    spotifyConfig.validateEnvironment();
 
     this.config = spotifyConfig.getConfig();
 

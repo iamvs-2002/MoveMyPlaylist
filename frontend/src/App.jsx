@@ -19,7 +19,6 @@ import ToastContainer from "./components/ToastContainer";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 // Hooks
-import { useAuth } from "./hooks/useAuth";
 import ScrollToTop from "./components/ScrollToTop";
 
 // API functions
@@ -28,7 +27,7 @@ const checkAuthStatus = async () => {
 };
 
 function App() {
-  const { data: authStatus, isLoading } = useQuery({
+  const { data: authStatus } = useQuery({
     queryKey: ["authStatus"],
     queryFn: checkAuthStatus,
     retry: 3,
@@ -39,19 +38,6 @@ function App() {
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
-
-  const { isAuthenticated, hasBothPlatforms } = useAuth(authStatus);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-mesh-dark flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-neutral-600">Loading MoveMyPlaylist...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <ErrorBoundary>
