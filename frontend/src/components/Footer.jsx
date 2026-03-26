@@ -29,6 +29,18 @@ const Footer = () => {
               Transfer your music playlists between platforms securely,
               privately, and fast.
             </p>
+            <a
+              href="https://useneedle.net/directory/movemyplaylist"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-4"
+            >
+              <img
+                src="https://useneedle.net/badges/needle-directory.svg"
+                alt="Listed on Needle Directory"
+                height="44"
+              />
+            </a>
           </div>
 
           {/* Links */}
