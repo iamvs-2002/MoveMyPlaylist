@@ -178,7 +178,16 @@ class SpotifyService {
    */
   handleSpotifyError(error, operation) {
     if (error.response?.data) {
-      const { error: spotifyError, error_description } = error.response.data;
+      const data = error.response.data;
+      
+      // Handle the case where data is a string (like the premium required error)
+      if (typeof data === "string" && data.includes("Active premium subscription required")) {
+        throw new Error(
+          "Spotify API Error: The owner of this Spotify App (Client ID) must have an active Spotify Premium subscription. If you are using your own keys, please ensure your Spotify account has Premium. If you just upgraded, it may take a few hours to take effect."
+        );
+      }
+
+      const { error: spotifyError, error_description } = data;
 
       switch (spotifyError) {
         case spotifyConfig.errors.invalidGrant:
@@ -202,9 +211,13 @@ class SpotifyService {
             "Invalid permissions requested. Please contact support.",
           );
         default:
+          if (error.response.status === 403) {
+             throw new Error("Spotify Permission Error: Your account or the app owner does not have the necessary permissions for this action. This often requires a Spotify Premium subscription for the App Owner in the Spotify Developer Dashboard.");
+          }
           console.error(`Spotify ${operation} error:`, {
             error: spotifyError,
             description: error_description,
+            status: error.response.status
           });
           throw new Error("Unable to complete operation. Please try again.");
       }
@@ -383,13 +396,7 @@ class SpotifyService {
 
       return result;
     } catch (error) {
-      console.error("Error in SpotifyService.getUserPlaylists:", {
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-      });
-      throw new Error("Unable to get playlists. Please try again.");
+      this.handleSpotifyError(error, "get_user_playlists");
     }
   }
 
