@@ -207,11 +207,12 @@ const handleSpotifyCallback = async (req, res) => {
       "Spotify callback validation passed, proceeding with token exchange",
     );
 
-    // Exchange code for tokens with PKCE (Pass credentials as options)
-    const tokens = await spotifyService.exchangeCodeForTokens(code, {
+    // Exchange code for tokens with PKCE
+    const tokens = await spotifyService.exchangeCodeForTokens(
+      code,
       codeVerifier,
-      ...credentials,
-    });
+      credentials,
+    );
     console.log("Spotify tokens received successfully");
 
     // Get user profile - this endpoint might not strictly require custom clientId/secret but good to pass if service uses it
@@ -329,8 +330,9 @@ const handleSpotifyCallback = async (req, res) => {
     }
   } catch (error) {
     console.error("Spotify callback error:", error);
+    const errorMessage = error.message || "login_failed";
     return res.redirect(
-      `${process.env.FRONTEND_URL}/transfer?error=login_failed&platform=spotify`,
+      `${process.env.FRONTEND_URL}/transfer?error=${encodeURIComponent(errorMessage)}&platform=spotify`,
     );
   }
 };

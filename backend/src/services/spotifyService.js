@@ -185,13 +185,13 @@ class SpotifyService {
           throw new Error("Authorization expired. Please log in again.");
         case spotifyConfig.errors.invalidClient:
           throw new Error(
-            "Invalid application credentials. Please contact support.",
+            "Invalid application credentials. If you're using your own keys, please double-check your Client ID and Client Secret in the Spotify Developer Dashboard.",
           );
         case spotifyConfig.errors.invalidRequest:
           throw new Error("Invalid request. Please try again.");
         case spotifyConfig.errors.unauthorizedClient:
           throw new Error(
-            "Application not authorized. Please contact support.",
+            "Application not authorized. Ensure you've added the correct Redirect URI to your Spotify App settings.",
           );
         case spotifyConfig.errors.unsupportedGrantType:
           throw new Error(
