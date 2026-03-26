@@ -12,6 +12,7 @@ import FAQPage from "./pages/FAQPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import AuthCallback from "./pages/AuthCallback";
 
 // Components
 import Header from "./components/Header";
@@ -56,6 +57,10 @@ function App() {
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
+            
+            {/* OAuth Callback Handlers (Forward to Backend) */}
+            <Route path="/auth/spotify/callback" element={<AuthCallback platform="spotify" />} />
+            <Route path="/auth/youtube/callback" element={<AuthCallback platform="youtube" />} />
 
             {/* Redirect dashboard to transfer */}
             <Route
