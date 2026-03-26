@@ -11,7 +11,12 @@ class YouTubePlatform extends BasePlatform {
     // Extract configuration
     this.clientId = config.oauth.clientId;
     this.clientSecret = config.oauth.clientSecret;
-    this.redirectUri = config.oauth.redirectUri;
+    // Provide a fallback redirect URI if not set in config (BYOK mode support)
+    this.redirectUri =
+      config.oauth.redirectUri ||
+      (process.env.FRONTEND_URL
+        ? `${process.env.FRONTEND_URL}/auth/youtube/callback`
+        : "https://movemyplaylist.online/auth/youtube/callback");
     this.baseUrl = config.api.baseUrl;
     this.authUrl = config.api.authUrl;
     this.tokenUrl = config.api.tokenUrl;

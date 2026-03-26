@@ -30,7 +30,12 @@ class SpotifyService {
 
     this.clientId = this.config.clientId;
     this.clientSecret = this.config.clientSecret;
-    this.redirectUri = this.config.redirectUri; // Use the original redirect URI from config
+    // Provide a fallback redirect URI if not set in environment (BYOK mode support)
+    this.redirectUri =
+      this.config.redirectUri ||
+      (process.env.FRONTEND_URL
+        ? `${process.env.FRONTEND_URL}/auth/spotify/callback`
+        : "https://movemyplaylist.online/auth/spotify/callback");
     this.baseUrl = this.config.api;
     this.authUrl = this.config.authorization;
     this.tokenUrl = this.config.token;

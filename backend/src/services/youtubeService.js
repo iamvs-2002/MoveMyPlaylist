@@ -11,7 +11,12 @@ class YouTubeService {
   constructor() {
     this.clientId = process.env.YOUTUBE_CLIENT_ID;
     this.clientSecret = process.env.YOUTUBE_CLIENT_SECRET;
-    this.redirectUri = process.env.YOUTUBE_REDIRECT_URI;
+    // Provide a fallback redirect URI if not set in environment (BYOK mode support)
+    this.redirectUri =
+      process.env.YOUTUBE_REDIRECT_URI ||
+      (process.env.FRONTEND_URL
+        ? `${process.env.FRONTEND_URL}/auth/youtube/callback`
+        : "https://movemyplaylist.online/auth/youtube/callback");
     this.apiKey = process.env.YOUTUBE_API_KEY;
     this.baseUrl = "https://www.googleapis.com/youtube/v3";
     this.authUrl = "https://accounts.google.com/o/oauth2/v2/auth";
