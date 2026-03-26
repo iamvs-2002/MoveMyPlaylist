@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  .dark {
+    --background: 240 10% 3.9%; /* #0A0A0A */
+    --foreground: 0 0% 98%; /* #FAFAFA */
+
+    --card: 240 10% 5%; /* #0D0D0D */
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 5%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 292 84% 61%; /* #D946EF */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 270 73% 47%; /* #7E22CE */
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 5% 8%; /* #141414 */
+    --muted-foreground: 240 5% 61%; /* #9CA3AF */
+
+    --accent: 0 0% 100%; /* #FFFFFF */
+    --accent-foreground: 240 10% 3.9%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5% 10%; /* #1A1A1A */
+    --input: 240 5% 10%;
+    --ring: 292 84% 61%; /* #D946EF */
+
+    --radius: 1rem; /* 16px */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Force dark background statically to prevent white flashes */
+    background-color: #050505;
+  }
+
+  body {
+    @apply bg-[#050505] text-foreground font-sans min-h-screen selection:bg-primary/30 selection:text-white;
+  }
+
+  /* Typography Hierarchy Using Outfit (display) & Inter (sans) */
+  h1,
+  .h1 {
+    @apply font-display text-display tracking-tight text-white mb-6;
+  }
+
+  h2,
+  .h2 {
+    @apply font-display text-hero tracking-tight text-white mb-4;
+  }
+
+  h3,
+  .h3 {
+    @apply font-display text-title tracking-tight text-white mb-3;
+  }
+
+  h4,
+  .h4,
+  h5,
+  .h5,
+  h6,
+  .h6 {
+    @apply font-display text-subtitle text-white mb-2;
+  }
+
+  p,
+  .body-text,
+  span,
+  div,
+  caption {
+    @apply font-sans;
+  }
+
+  p {
+    @apply text-muted-foreground leading-relaxed mb-4;
+  }
+
+  /* Link Overrides */
+  a {
+    @apply text-foreground hover:text-primary transition-colors duration-200 outline-none;
+  }
+}
+
+@layer components {
+  /* Glassmorphism Card Ecosystem */
+  .glass-card {
+    @apply relative overflow-hidden rounded-[2rem] bg-white/[0.03] border border-white/[0.08] backdrop-blur-xl shadow-glass;
+  }
+
+  .glass-panel {
+    @apply relative overflow-hidden rounded-[1.5rem] bg-black/40 border border-white/5 backdrop-blur-2xl;
+  }
+
+  .glass-interactive {
+    @apply glass-card cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.6)];
+  }
+
+  /* Premium Buttons */
+  .btn-primary {
+    @apply relative overflow-hidden bg-primary text-white font-display font-semibold py-4 px-8 rounded-full shadow-[0_0_20px_rgba(217,70,239,0.2)] hover:shadow-[0_0_30px_rgba(217,70,239,0.5)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-primary::before {
+    content: "";
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] transition-transform duration-700 ease-in-out;
+  }
+
+  .btn-primary:hover::before {
+    @apply translate-x-[100%];
+  }
+
+  .btn-outline {
+    @apply bg-transparent hover:bg-white/5 text-white font-display font-semibold py-4 px-8 rounded-full border border-white/20 hover:border-white/40 transition-all duration-300;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent hover:bg-white/10 text-muted-foreground hover:text-white font-sans font-medium py-3 px-6 rounded-full transition-all duration-300;
+  }
+
+  .btn-sm {
+    @apply py-2 px-5 text-sm;
+  }
+
+  .btn-lg {
+    @apply py-5 px-10 text-lg;
+  }
+
+  /* Inputs (Dark & Frosted) */
+  .input {
+    @apply w-full px-5 py-4 border border-white/10 rounded-xl bg-white/5 text-white placeholder-white/30 backdrop-blur-md focus:border-primary/50 focus:bg-white/10 focus:ring-1 focus:ring-primary/50 transition-all duration-300 shadow-inner;
+  }
+  .input:focus {
+    @apply outline-none shadow-[0_0_15px_rgba(217,70,239,0.15)];
+  }
+
+  /* Gradient Text Utility */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+  }
+
+  .text-gradient-spotify {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#1ed760] to-[#1cdf59];
+  }
+
+  .text-gradient-youtube {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#ff0000] to-[#ff4444];
+  }
+
+  /* Layout Containers */
+  .container-app {
+    @apply w-full max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 relative z-10;
+  }
+
+  .container-narrow {
+    @apply w-full max-w-4xl mx-auto px-6 md:px-12;
+  }
+}
+
+@layer utilities {
+  .bg-mesh-dark {
+    background-color: #050505;
+    background-image:
+      radial-gradient(
+        at 10% 20%,
+        rgba(217, 70, 239, 0.15) 0px,
+        transparent 40%
+      ),
+      radial-gradient(
+        at 90% 80%,
+        rgba(126, 34, 206, 0.15) 0px,
+        transparent 40%
+      ),
+      radial-gradient(at 50% 50%, rgba(217, 70, 239, 0.05) 0px, transparent 60%);
+    background-size: 200% 200%;
+    animation: mesh-pan 20s ease-in-out infinite alternate;
+  }
+
+  .overlay-gradient {
+    background: linear-gradient(
+      180deg,
+      rgba(5, 5, 5, 0) 0%,
+      rgba(5, 5, 5, 0.8) 100%
+    );
+  }
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-[#050505];
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full border-2 border-[#050505];
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-white/20;
+}

@@ -1,0 +1,91 @@
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { get } from "./utils/enhancedApi";
+
+// Pages
+import LandingPage from "./pages/LandingPage";
+import TransferPage from "./pages/TransferPage";
+import AuthError from "./pages/AuthError";
+import Documentation from "./pages/Documentation";
+import FAQPage from "./pages/FAQPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+
+// Components
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import ToastContainer from "./components/ToastContainer";
+import ErrorBoundary from "./components/ErrorBoundary";
+
+// Hooks
+import { useAuth } from "./hooks/useAuth";
+import ScrollToTop from "./components/ScrollToTop";
+
+// API functions
+const checkAuthStatus = async () => {
+  return await get("/auth/status");
+};
+
+function App() {
+  const { data: authStatus, isLoading } = useQuery({
+    queryKey: ["authStatus"],
+    queryFn: checkAuthStatus,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+
+  const { isAuthenticated, hasBothPlatforms } = useAuth(authStatus);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-mesh-dark flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-neutral-600">Loading MoveMyPlaylist...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <ErrorBoundary>
+      <div className="min-h-screen bg-[#050505] text-foreground flex flex-col">
+        <ScrollToTop />
+        <Header authStatus={authStatus} />
+
+        <main className="flex-1">
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/transfer" element={<TransferPage />} />
+            <Route path="/auth/error" element={<AuthError />} />
+            <Route path="/docs" element={<Documentation />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+
+            {/* Redirect dashboard to transfer */}
+            <Route
+              path="/dashboard"
+              element={<Navigate to="/transfer" replace />}
+            />
+
+            {/* Catch all route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+
+        <Footer />
+        <ToastContainer />
+      </div>
+    </ErrorBoundary>
+  );
+}
+
+export default App;
