@@ -1,0 +1,1 @@
+{ \name\: \MoveMyPlaylist\, \description\: \Free music playlist transfer service\, \url\: \https://movemyplaylist.online\, \api_capability\: \Playlist transfer between Spotify and YouTube Music\, \byok_ready\: true, \privacy_rating\: \High\, \contact\: \movemyplaylist.online@gmail.com\ }
